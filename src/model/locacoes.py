@@ -1,11 +1,12 @@
 from typing_extensions import Self
-
+from model.clientes import Clientes
+from model.automoveis import Automoveis
 
 class Locacoes:
-    def __init__(self,data_devolucao:str=None, cpf:str=None, Placa:str=None, nome_modelo:str=None, nome_marca:str=None, data_locacao:str=None):
+    def __init__(self,codigo_locacao:int=None, cliente:Clientes=None, automoveis:Automoveis=None, nome_modelo:str=None, nome_marca:str=None, data_locacao:str=None,data_devolucao:str=None):
         self.set_data_devolucao(data_devolucao)
-        self.set_cpf(cpf)
-        self.set_Placa(Placa)
+        self.set_cliente(cliente)
+        self.set_automoveis(automoveis)
         self.set_nome_modelo(nome_modelo)
         self.set_nome_marca(nome_marca)
         self.set_data_locacao(data_locacao)
@@ -13,8 +14,12 @@ class Locacoes:
     def set_data_devolucao(self,data_devolucao:str):
         self.data_devolucao=data_devolucao
     
-    def set_cpf(self,cpf:str):
-        self.cpf= cpf
+    def set_cliente(self, cliente:Clientes):
+        self.cliente = cliente
+
+    def set_automoveis(self, automoveis:Automoveis):
+        self.cliente = automoveis
+
     
     def set_Placa(self,Placa:str):
         self.Placa = Placa
@@ -32,11 +37,11 @@ class Locacoes:
     def get_data_devolucao(self) -> str:
         return self.data_devolucao
 
-    def get_cpf(self) -> str:
-        return self.cpf
+    def get_cliente(self) -> Clientes:
+        return self.cliente
     
-    def get_Placa(self) -> str:
-        return self.Placa
+    def get_automoveis(self) -> Automoveis:
+        return self.automoveis
     
     def get_nome_modelo(self) -> str:
         return self.nome_modelo
@@ -48,4 +53,4 @@ class Locacoes:
         return self.data_locacao
 
     def to_string(self) -> str:
-        return f"Data de devolução: {self.get_data_devolucao()} | CPF: {self.get_cpf()} | Placa: {self.get_Placa} | Nome do modelo: {self.get_nome_modelo} | Nome da marca {self.get_nome_marca} | Devolução: {self.get_data_devolucao}" 
+        return f"Data de devolução: {self.get_data_devolucao()} | CPF: {self.get_cliente().get_cpf} | Placa: {self.get_automoveis().get_Placa()} | Nome do modelo: {self.get_nome_modelo} | Nome da marca {self.get_nome_marca} | Devolução: {self.get_data_devolucao}" 

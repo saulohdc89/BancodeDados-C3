@@ -1,31 +1,52 @@
 from bson import ObjectId
 import pandas as pd
-from model.produtos import Produto
+from model.locacoes import Locacoes
 from conexion.mongo_queries import MongoQueries
-
+from reports.relatorios import Relatorio
+from model.clientes import Clientes
+from model.automoveis import Automoveis
+from controller.controller_cliente import Controller_Cliente
+from controller.controller_automoveis import Controller_Automoveis
+from datetime import datetime
 class Controller_Produto:
     def __init__(self):
         self.mongo = MongoQueries()
+        self.relatorio = Relatorio()
+        self.ctrl_cliente = Controller_Cliente()
+        self.ctrl_automoveis = Controller_Automoveis()
         
-    def inserir_produto(self) -> Produto:
+    def inserir_locacoes(self) -> Locacoes:
         # Cria uma nova conexão com o banco
         self.mongo.connect()
+        self.relatorio.get_relatorio_clientes()
+        cpf = str(input("Digite o número do CPF do Cliente: "))
+        cliente = self.valida_cliente(cpf)
+        if cliente == None:
+            return None
+
+        self.relatorio.get_relatorio_automoveis()
+        placa = str(input("Digite a placa do Automovel: "))
+        automovel = self.valida_automovel(placa)
+        if automovel == None:
+            return None
         
-        #Solicita ao usuario a nova descrição do produto
-        descricao_novo_produto = input("Descrição (Novo): ")
-        proximo_produto = self.mongo.db["produtos"].aggregate([
+
+        
+        data_locacao= datetime.today().strftime("%m-%d-%Y")
+        data_devolucao = input("Data de Devolucao (Novo): ")
+        proxima_locacao = self.mongo.db["locacoes"].aggregate([
                                                     {
                                                         '$group': {
-                                                            '_id': '$produtos', 
-                                                            'proximo_produto': {
-                                                                '$max': '$codigo_produto'
+                                                            '_id': '$locacoes', 
+                                                            'proxima_locacao': {
+                                                                '$max': '$codigo_locacao'
                                                             }
                                                         }
                                                     }, {
                                                         '$project': {
-                                                            'proximo_produto': {
+                                                            'proxima_locacao': {
                                                                 '$sum': [
-                                                                    '$proximo_produto', 1
+                                                                    '$proxima_locacao', 1
                                                                 ]
                                                             }, 
                                                             '_id': 0
@@ -33,45 +54,61 @@ class Controller_Produto:
                                                     }
                                                 ])
 
-        proximo_produto = int(list(proximo_produto)[0]['proximo_produto'])
+        proxima_locacao = int(list(proxima_locacao)[0]['proxima_locacao'])
         
         # Insere e Recupera o código do novo produto
-        id_produto = self.mongo.db["produtos"].insert_one({"codigo_produto": proximo_produto, "descricao_produto": descricao_novo_produto})
+        id_locacao = self.mongo.db["locacaoes"].insert_one({"codigo_locacao": proxima_locacao,"cpf":cpf,"placa": placa, "data_devolucao":data_devolucao ,"data_locacao": data_locacao,})
         # Recupera os dados do novo produto criado transformando em um DataFrame
-        df_produto = self.recupera_produto(id_produto.inserted_id)
+        df_locacoes = self.recupera_locacao(id_locacao.inserted_id)
         # Cria um novo objeto Produto
-        novo_produto = Produto(df_produto.codigo_produto.values[0], df_produto.descricao_produto.values[0])
+        nova_locacao = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
         # Exibe os atributos do novo produto
-        print(novo_produto.to_string())
+        print(nova_locacao.to_string())
         self.mongo.close()
         # Retorna o objeto novo_produto para utilização posterior, caso necessário
-        return novo_produto
+        return nova_locacao
 
-    def atualizar_produto(self) -> Produto:
+    def atualizar_produto(self) -> Automoveis:
         # Cria uma nova conexão com o banco que permite alteração
         self.mongo.connect()
 
         # Solicita ao usuário o código do produto a ser alterado
-        codigo_produto = int(input("Código do Produto que irá alterar: "))        
+        codigo_locacao = int(input("Código da Locaçao que irá alterar: "))
+
 
         # Verifica se o produto existe na base de dados
-        if not self.verifica_existencia_produto(codigo_produto):
+        if not self.verifica_existencia_locacao(codigo_locacao):
+            
+            self.relatorio.get_relatorio_clientes()
+            cpf = str(input("Digite o número do CPF do Cliente: "))
+            cliente = self.valida_cliente(cpf)
+            if cliente == None:
+                return None
+            self.relatorio.get_relatorio_automoveis()
+            placa = str(input("Digite a placa do Automovel: "))
+            automovel = self.valida_automovel(placa)
+            if automovel == None:
+                return None
+            
+            
             # Solicita a nova descrição do produto
-            nova_descricao_produto = input("Descrição (Novo): ")
+            data_locacao= datetime.today().strftime("%m-%d-%Y")
+            data_devolucao = input("Data de Devolucao (Novo): ")
+            
             # Atualiza a descrição do produto existente
-            self.mongo.db["produtos"].update_one({"codigo_produto": codigo_produto}, {"$set": {"descricao_produto": nova_descricao_produto}})
+            self.mongo.db["locacoes"].update_one({"codigo_locacao": codigo_locacao}, {"$set": {"cpf":cliente.get_cpf(),"$placa":automovel.get_Placa(),"$data_locacao":data_locacao,"$data_devolucao": data_devolucao}})
             # Recupera os dados do novo produto criado transformando em um DataFrame
-            df_produto = self.recupera_produto_codigo(codigo_produto)
+            df_locacoes = self.recupera_locacao_codigo(codigo_locacao)
             # Cria um novo objeto Produto
-            produto_atualizado = Produto(df_produto.codigo_produto.values[0], df_produto.descricao_produto.values[0])
+            locacoes_atualizado = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
             # Exibe os atributos do novo produto
-            print(produto_atualizado.to_string())
+            print(locacoes_atualizado.to_string())
             self.mongo.close()
             # Retorna o objeto produto_atualizado para utilização posterior, caso necessário
-            return produto_atualizado
+            return locacoes_atualizado
         else:
             self.mongo.close()
-            print(f"O código {codigo_produto} não existe.")
+            print(f"O código {codigo_locacao} não existe.")
             return None
 
     def excluir_produto(self):
@@ -79,53 +116,76 @@ class Controller_Produto:
         self.mongo.connect()
 
         # Solicita ao usuário o código do produto a ser alterado
-        codigo_produto = int(input("Código do Produto que irá excluir: "))        
+        codigo_locacao = int(input("Código da Locacao que irá excluir: "))        
 
         # Verifica se o produto existe na base de dados
-        if not self.verifica_existencia_produto(codigo_produto):            
+        if not self.verifica_existencia_locacao(codigo_locacao):            
             # Recupera os dados do novo produto criado transformando em um DataFrame
-            df_produto = self.recupera_produto_codigo(codigo_produto)
+            df_produto = self.recupera_locacao_codigo(codigo_locacao)
             # Revome o produto da tabela
-            self.mongo.db["produtos"].delete_one({"codigo_produto": codigo_produto})
+            self.mongo.db["locacoes"].delete_one({"codigo_locacao": codigo_locacao})
             # Cria um novo objeto Produto para informar que foi removido
-            produto_excluido = Produto(df_produto.codigo_produto.values[0], df_produto.descricao_produto.values[0])
+            locacao_excluido = Locacoes(df_produto.codigo_produto.values[0], df_produto.descricao_produto.values[0])
             # Exibe os atributos do produto excluído
             print("Produto Removido com Sucesso!")
-            print(produto_excluido.to_string())
+            print(locacao_excluido.to_string())
             self.mongo.close()
         else:
             self.mongo.close()
-            print(f"O código {codigo_produto} não existe.")
+            print(f"O código {codigo_locacao} não existe.")
 
-    def verifica_existencia_produto(self, codigo:int=None, external: bool = False) -> bool:
+    def verifica_existencia_locacao(self, codigo:int=None, external: bool = False) -> bool:
         if external:
             # Cria uma nova conexão com o banco que permite alteração
             self.mongo.connect()
 
         # Recupera os dados do novo produto criado transformando em um DataFrame
-        df_produto = pd.DataFrame(self.mongo.db["produtos"].find({"codigo_produto":codigo}, {"codigo_produto": 1, "descricao_produto": 1, "_id": 0}))
+        df_locacao = pd.DataFrame(self.mongo.db["locacoes"].find({"codigo_locacao":codigo}, {"codigo_locacao": 1,"cpf":1 ,"placa": 1,"data_locacao":1,"data_devolucao":1,"_id": 0}))
 
         if external:
             # Fecha a conexão com o Mongo
             self.mongo.close()
 
-        return df_produto.empty
+        return df_locacao.empty
 
-    def recupera_produto(self, _id:ObjectId=None) -> pd.DataFrame:
+    def recupera_locacao(self, _id:ObjectId=None) -> pd.DataFrame:
         # Recupera os dados do novo produto criado transformando em um DataFrame
-        df_produto = pd.DataFrame(list(self.mongo.db["produtos"].find({"_id":_id}, {"codigo_produto": 1, "descricao_produto": 1, "_id": 0})))
+        df_produto = pd.DataFrame(list(self.mongo.db["locacoes"].find({"_id":_id}, {"codigo_locacao": 1,"cpf":1 ,"placa": 1,"data_locacao":1,"data_devolucao":1,"_id": 0})))
         return df_produto
 
-    def recupera_produto_codigo(self, codigo:int=None, external: bool = False) -> pd.DataFrame:
+    def recupera_locacao_codigo(self, codigo:int=None, external: bool = False) -> pd.DataFrame:
         if external:
             # Cria uma nova conexão com o banco que permite alteração
             self.mongo.connect()
 
         # Recupera os dados do novo produto criado transformando em um DataFrame
-        df_produto = pd.DataFrame(list(self.mongo.db["produtos"].find({"codigo_produto":codigo}, {"codigo_produto": 1, "descricao_produto": 1, "_id": 0})))
+        df_produto = pd.DataFrame(list(self.mongo.db["locacoes"].find({"codigo_locacao":codigo}, {"codigo_locacao": 1,"cpf":1 ,"placa": 1,"data_locacao":1,"data_devolucao":1,"_id": 0})))
 
         if external:
             # Fecha a conexão com o Mongo
             self.mongo.close()
 
         return df_produto
+
+
+    def valida_cliente(self, cpf:str=None) -> Clientes:
+        if self.ctrl_cliente.verifica_existencia_cliente(cpf=cpf, external=True):
+            print(f"O CPF {cpf} informado não existe na base.")
+            return None
+        else:
+            # Recupera os dados do novo cliente criado transformando em um DataFrame
+            df_cliente = self.ctrl_cliente.recupera_cliente(cpf=cpf, external=True)
+            # Cria um novo objeto cliente
+            cliente = Clientes(df_cliente.cpf.values[0], df_cliente.nome.values[0])
+            return cliente
+
+    def valida_automovel(self, placa:str=None) -> Automoveis:
+        if self.ctrl_automoveis.verifica_existencia_automoveis(placa=placa, external=True):
+            print(f"A Placa {placa} informada não existe na base.")
+            return None
+        else:
+            # Recupera os dados do novo cliente criado transformando em um DataFrame
+            df_automoveis = self.ctrl_automoveis.recupera_automoveis(placa=placa, external=True)
+            # Cria um novo objeto cliente
+            automoveis = Automoveis(df_automoveis.placa.values[0],df_automoveis.renavam.values[0], df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0] ,df_automoveis.nova_marca.values[0],df_automoveis.novo_modelo.values[0])
+            return automoveis

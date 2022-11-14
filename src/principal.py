@@ -1,11 +1,8 @@
 from utils import config
 from utils.splash_screen import SplashScreen
 from reports.relatorios import Relatorio
-from controller.controller_produto import Controller_Produto
+from controller.controller_locacoes import Controller_Produto
 from controller.controller_cliente import Controller_Cliente
-from controller.controller_fornecedor import Controller_Fornecedor
-from controller.controller_pedido import Controller_Pedido
-from controller.controller_item_pedido import Controller_Item_Pedido
 
 tela_inicial = SplashScreen()
 relatorio = Relatorio()
