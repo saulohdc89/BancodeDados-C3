@@ -68,7 +68,7 @@ class Controller_Produto:
         # Retorna o objeto novo_produto para utilização posterior, caso necessário
         return nova_locacao
 
-    def atualizar_produto(self) -> Automoveis:
+    def atualizar_locacao(self) -> Automoveis:
         # Cria uma nova conexão com o banco que permite alteração
         self.mongo.connect()
 
@@ -111,7 +111,7 @@ class Controller_Produto:
             print(f"O código {codigo_locacao} não existe.")
             return None
 
-    def excluir_produto(self):
+    def excluir_locacao(self):
         # Cria uma nova conexão com o banco que permite alteração
         self.mongo.connect()
 

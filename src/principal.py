@@ -8,9 +8,6 @@ tela_inicial = SplashScreen()
 relatorio = Relatorio()
 ctrl_produto = Controller_Produto()
 ctrl_cliente = Controller_Cliente()
-ctrl_fornecedor = Controller_Fornecedor()
-ctrl_pedido = Controller_Pedido()
-ctrl_item_pedido = Controller_Item_Pedido()
 
 def reports(opcao_relatorio:int=0):
 
@@ -44,7 +41,7 @@ def atualizar(opcao_atualizar:int=0):
 
     if opcao_atualizar == 1:
         relatorio.get_relatorio_produtos()
-        produto_atualizado = ctrl_produto.atualizar_produto()
+        produto_atualizado = ctrl_produto.atualizar_locacao()
     elif opcao_atualizar == 2:
         relatorio.get_relatorio_clientes()
         cliente_atualizado = ctrl_cliente.atualizar_cliente()
@@ -62,7 +59,7 @@ def excluir(opcao_excluir:int=0):
 
     if opcao_excluir == 1:
         relatorio.get_relatorio_produtos()
-        ctrl_produto.excluir_produto()
+        ctrl_produto.excluir_locacao()
     elif opcao_excluir == 2:                
         relatorio.get_relatorio_clientes()
         ctrl_cliente.excluir_cliente()
