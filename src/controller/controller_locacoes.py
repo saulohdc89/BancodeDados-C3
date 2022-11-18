@@ -8,7 +8,7 @@ from model.automoveis import Automoveis
 from controller.controller_cliente import Controller_Cliente
 from controller.controller_automoveis import Controller_Automoveis
 from datetime import datetime
-class Controller_Produto:
+class Controller_Locacoes:
     def __init__(self):
         self.mongo = MongoQueries()
         self.relatorio = Relatorio()

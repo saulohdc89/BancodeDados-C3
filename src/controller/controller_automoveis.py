@@ -6,15 +6,15 @@ from reports.relatorios import Relatorio
 
 
 
-class Controller_Item_Pedido:
+class Controller_Automoveis:
     def __init__(self):
       
         self.mongo = MongoQueries()
         self.relatorio = Relatorio()
         
-        def inserir_automovel(self) -> Automoveis:
+    def inserir_automovel(self) -> Automoveis:
         
-            self.mongo.connect()
+        self.mongo.connect()
         
         nova_Placa = input("Placa (Novo): ")
 
@@ -89,7 +89,7 @@ class Controller_Item_Pedido:
             # Recupera os dados do novo item de pedido criado transformando em um DataFrame
             df_automoveis = self.recupera_automoveis(placa)
             self.mongo.db["automoveis"].delete_one({"Placa":f"{placa}"})
-            automovel_excluido  = Automoveis(df_automoveis.placa.values[0],df_automoveis.renavam.values[0], df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0] ,df_automoveis.nova_marca.values[0],df_automoveis.novo_modelo.values[0])
+            automovel_excluido  = Automoveis(df_automoveis.placa.values[0],df_automoveis.nome_modelo.values[0],df_automoveis.nome_marca.values[0],df_automoveis.renavam.values[0], df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0] ,df_automoveis.nova_marca.values[0],df_automoveis.novo_modelo.values[0])
             self.mongo.close()
             print("Automovel Removido com Sucesso!")
             print(automovel_excluido.to_string())
@@ -102,7 +102,7 @@ class Controller_Item_Pedido:
             # Cria uma nova conexão com o banco que permite alteração
             self.mongo.connect()
         
-            df_automoveis= pd.DataFrame(self.mongo.db["automoveis"].find({"placa":f"{Placa}"}, {"placa": 1, "renavam": 1,"cor":1,"n_portas":1,"nome_modelo":1,"nome_marca":1,"tipo_combustivel":1, "_id": 0}))
+            df_automoveis= pd.DataFrame(list(self.mongo.db["automoveis"].find({"placa":f"{Placa}"}, {"placa": 1,"nome_modelo":1,"nome_marca":1, "renavam": 1,"cor":1,"n_portas":1,"tipo_combustivel":1,"_id": 0})))
 
             if external:
             # Fecha a conexão com o Mongo
