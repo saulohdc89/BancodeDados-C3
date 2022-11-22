@@ -49,7 +49,7 @@ def excluir(opcao_excluir:int=0):
         ctrl_cliente.excluir_cliente()
     elif opcao_excluir == 2:                
         relatorio.get_relatorio_automoveis()
-        ctrl_cliente.excluir_cliente()
+        ctrl_automoveis.excluir_automoveis()
     elif opcao_excluir == 3:                
         relatorio.get_relatorio_locacoes()
         ctrl_locacoes.excluir_locacao()

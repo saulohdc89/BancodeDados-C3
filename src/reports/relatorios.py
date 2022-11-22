@@ -35,14 +35,14 @@ class Relatorio:
         # Recupera os dados transformando em um DataFrame
         query_result = mongo.db["automoveis"].find({}, 
                                                      {"placa": 1, 
-                                                      "nome_modelo": 1, 
-                                                      "nome_marca": 1,
+                                                      "modelo": 1, 
+                                                      "marca": 1,
                                                       "renavam": 1, 
                                                       "cor:":1,
                                                       "n_portas":1,
                                                       "tipo_combustivel":1,
                                                       "_id": 0
-                                                     }).sort("nome_fantasia", ASCENDING)
+                                                     }).sort("placa", ASCENDING)
         df_automoveis = pd.DataFrame(list(query_result))
         # Fecha a conexão com o mongo
         mongo.close()

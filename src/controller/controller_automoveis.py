@@ -25,9 +25,9 @@ class Controller_Automoveis:
             tipo_combustivel = input("Tipo de combustivel")
             nova_marca = input("Marca:")
             novo_modelo = input("Modelo:")
-            self.mongo.db["automoveis"].insert_one({"placa": nova_Placa, "renavam": renavam,"n_portas":N_portas,"tipo_combustivel":tipo_combustivel,"marca":nova_marca, "modelo" : novo_modelo})
+            self.mongo.db["automoveis"].insert_one({"placa": nova_Placa,"marca":nova_marca, "modelo" : novo_modelo ,"renavam": renavam,"cor":nova_cor,"n_portas":N_portas,"tipo_combustivel":tipo_combustivel})
             df_automoveis = self.recupera_automoveis(nova_Placa)
-            novo_automoveis = Automoveis(df_automoveis.placa.values[0],df_automoveis.renavam.values[0], df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0] ,df_automoveis.nova_marca.values[0],df_automoveis.novo_modelo.values[0])
+            novo_automoveis = Automoveis(df_automoveis.placa.values[0],df_automoveis.marca.values[0],df_automoveis.modelo.values[0],df_automoveis.renavam.values[0],df_automoveis.cor.values[0] ,df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0])
             print(novo_automoveis.to_string())
             self.mongo.close()
             return novo_automoveis
@@ -35,19 +35,6 @@ class Controller_Automoveis:
             self.mongo.close()
             print(f"A Placa {nova_Placa} já está cadastrada.")
             return None
-                
-
-
-            data = dict(Placa = nova_Placa,r_nome_modelo = novo_modelo,nome_marca = nova_marca,RENAVAM = renavam,cor =nova_cor,n_portas=N_portas, combustivel = tipo_combustivel )
-
-
-
-        # Recupera os dados do novo produto criado transformando em um DataFrame
-        # Cria um novo objeto Produto
-        # Exibe os atributos do novo produto
-        print(novo_automoveis.to_string())
-        # Retorna o objeto novo_produto para utilização posterior, caso necessário
-        return novo_automoveis
 
     def atualizar_automoveis(self) -> Automoveis:
         # Cria uma nova conexão com o banco que permite alteração
@@ -64,9 +51,9 @@ class Controller_Automoveis:
             tipo_combustivel = input("Tipo de combustivel")
             nova_marca = input("Marca:")
             novo_modelo = input("Modelo:")
-            self.mongo.db["automoveis"].update_one({"placa": f"{placa}"}, {"$set": {"renavam": renavam,"n_portas":N_portas,"tipo_combustivel":tipo_combustivel,"marca":nova_marca, "modelo" : novo_modelo}})
+            self.mongo.db["automoveis"].update_one({"placa": f"{placa}"}, {"$set": {"marca":nova_marca, "modelo" : novo_modelo ,"renavam": renavam,"cor":nova_cor,"n_portas":N_portas,"tipo_combustivel":tipo_combustivel}})
             df_automoveis = self.recupera_automoveis(placa)
-            automoveis_atualizado = Automoveis(df_automoveis.placa.values[0],df_automoveis.renavam.values[0], df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0] ,df_automoveis.nova_marca.values[0],df_automoveis.novo_modelo.values[0])
+            automoveis_atualizado = Automoveis(df_automoveis.placa.values[0],df_automoveis.modelo.values[0],df_automoveis.marca.values[0],df_automoveis.renavam.values[0],df_automoveis.cor.values[0] ,df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0])
             print(automoveis_atualizado.to_string())
             
             self.mongo.close()
@@ -76,7 +63,6 @@ class Controller_Automoveis:
             print(f"A Placa {placa} não existe.")
             return None
     
-
     def excluir_automoveis(self):
         # Cria uma nova conexão com o banco que permite alteração
         self.mongo.connect()
@@ -88,8 +74,8 @@ class Controller_Automoveis:
         if not self.verifica_existencia_automoveis(placa):            
             # Recupera os dados do novo item de pedido criado transformando em um DataFrame
             df_automoveis = self.recupera_automoveis(placa)
-            self.mongo.db["automoveis"].delete_one({"Placa":f"{placa}"})
-            automovel_excluido  = Automoveis(df_automoveis.placa.values[0],df_automoveis.nome_modelo.values[0],df_automoveis.nome_marca.values[0],df_automoveis.renavam.values[0], df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0] ,df_automoveis.nova_marca.values[0],df_automoveis.novo_modelo.values[0])
+            self.mongo.db["automoveis"].delete_one({"placa":f"{placa}"})
+            automovel_excluido  = Automoveis(df_automoveis.placa.values[0],df_automoveis.marca.values[0],df_automoveis.modelo.values[0],df_automoveis.renavam.values[0],df_automoveis.cor.values[0] ,df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0])
             self.mongo.close()
             print("Automovel Removido com Sucesso!")
             print(automovel_excluido.to_string())
@@ -97,18 +83,19 @@ class Controller_Automoveis:
             self.mongo.close()
             print(f"A Placa {placa} não existe.")
 
-    def verifica_existencia_automoveis(self, Placa:str=None, external:bool=False) -> bool:
-       if external:
+    def verifica_existencia_automoveis(self, placa:str=None, external:bool=False) -> bool:
+        if external:
             # Cria uma nova conexão com o banco que permite alteração
             self.mongo.connect()
         
-            df_automoveis= pd.DataFrame(list(self.mongo.db["automoveis"].find({"placa":f"{Placa}"}, {"placa": 1,"nome_modelo":1,"nome_marca":1, "renavam": 1,"cor":1,"n_portas":1,"tipo_combustivel":1,"_id": 0})))
+        # Recupera os dados do novo cliente criado transformando em um DataFrame
+        df_automoveis = pd.DataFrame(self.mongo.db["automoveis"].find({"placa":f"{placa}"}, {"placa": 1,"modelo":1,"marca":1, "renavam": 1,"cor":1,"n_portas":1,"tipo_combustivel":1,"_id": 0}))
 
-            if external:
+        if external:
             # Fecha a conexão com o Mongo
-                self.mongo.close()
+            self.mongo.close()
 
-            return df_automoveis.empty
+        return df_automoveis.empty
 
     def recupera_automoveis(self, Placa:str=None, external:bool=False) -> pd.DataFrame:
         if external:
@@ -116,12 +103,10 @@ class Controller_Automoveis:
             self.mongo.connect()
 
         # Recupera os dados do novo cliente criado transformando em um DataFrame
-        df_automoveis = pd.DataFrame(list(self.mongo.db["automoveis"].find({"placa":f"{Placa}"}, {"placa": 1, "renavam": 1,"cor":1,"n_portas":1,"nome_modelo":1,"nome_marca":1,"tipo_combustivel":1, "_id": 0})))
+        df_automoveis = pd.DataFrame(list(self.mongo.db["automoveis"].find({"placa":f"{Placa}"}, {"placa": 1,"modelo":1,"marca":1, "renavam": 1,"cor":1,"n_portas":1,"tipo_combustivel":1, "_id": 0})))
         
         if external:
             # Fecha a conexão com o Mongo
             self.mongo.close()
 
         return df_automoveis
-
-    

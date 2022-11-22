@@ -176,7 +176,7 @@ class Controller_Locacoes:
             # Recupera os dados do novo cliente criado transformando em um DataFrame
             df_cliente = self.ctrl_cliente.recupera_cliente(cpf=cpf, external=True)
             # Cria um novo objeto cliente
-            cliente = Clientes(df_cliente.cpf.values[0], df_cliente.nome.values[0])
+            cliente = Clientes(df_cliente.cpf.values[0], df_cliente.nome.values[0],df_cliente.endereco.values[0],df_cliente.telefone.values[0])
             return cliente
 
     def valida_automovel(self, placa:str=None) -> Automoveis:
@@ -185,7 +185,7 @@ class Controller_Locacoes:
             return None
         else:
             # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_automoveis = self.ctrl_automoveis.recupera_automoveis(placa=placa, external=True)
+            df_automoveis = self.ctrl_automoveis.recupera_automoveis(placa, external=True)
             # Cria um novo objeto cliente
-            automoveis = Automoveis(df_automoveis.placa.values[0],df_automoveis.renavam.values[0], df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0] ,df_automoveis.nova_marca.values[0],df_automoveis.novo_modelo.values[0])
+            automoveis = Automoveis(df_automoveis.placa.values[0],df_automoveis.modelo.values[0],df_automoveis.marca.values[0],df_automoveis.renavam.values[0],df_automoveis.cor.values[0] ,df_automoveis.n_portas.values[0], df_automoveis.tipo_combustivel.values[0])
             return automoveis
