@@ -7,7 +7,7 @@ from model.clientes import Clientes
 from model.automoveis import Automoveis
 from controller.controller_cliente import Controller_Cliente
 from controller.controller_automoveis import Controller_Automoveis
-from datetime import datetime
+from datetime import datetime,date,timedelta
 class Controller_Locacoes:
     def __init__(self):
         self.mongo = MongoQueries()
@@ -32,8 +32,10 @@ class Controller_Locacoes:
         
 
         
-        data_locacao= datetime.today().strftime("%m-%d-%Y")
-        data_devolucao = input("Data de Devolucao (Novo): ")
+        data_locacao = datetime.today().strftime("%m-%d-%Y")
+        dias = int(input("Digite os dias de locacao: "))
+        data_devolucao =  datetime.today() + timedelta(days=dias)
+        ddevolucao = data_devolucao.strftime("%m-%d-%Y")
         proxima_locacao = self.mongo.db["locacoes"].aggregate([
                                                     {
                                                         '$group': {
@@ -55,9 +57,10 @@ class Controller_Locacoes:
                                                 ])
 
         proxima_locacao = int(list(proxima_locacao)[0]['proxima_locacao'])
+        data = dict(codigo_locacao = proxima_locacao,ccpf = cliente.get_cpf(),aplaca = automovel.get_Placa(),locacao = data_locacao,devolucao = ddevolucao )
         
         # Insere e Recupera o código do novo produto
-        id_locacao = self.mongo.db["locacaoes"].insert_one({"codigo_locacao": proxima_locacao,"cpf":cpf,"placa": placa, "data_devolucao":data_devolucao ,"data_locacao": data_locacao,})
+        id_locacao = self.mongo.db["locacoes"].insert_one(data)
         # Recupera os dados do novo produto criado transformando em um DataFrame
         df_locacoes = self.recupera_locacao(id_locacao.inserted_id)
         # Cria um novo objeto Produto

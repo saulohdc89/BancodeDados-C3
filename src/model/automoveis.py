@@ -52,5 +52,5 @@ class Automoveis:
         return self.tipo_combustivel 
 
     def to_string(self) -> str:
-        return f"Placa: {self.get_Placa()} | Nome modelo: {self.get_nome_modelo()} | Nome  da Marca: {self.get_nome_marca()} | Renavam: {self.get_renavam()} | cor: {self.get_cor} | Numero de portas: {self.get_N_portas} | Tipo de combustivel: {self.get_tipo_combustivel} |" 
+        return f"Placa: {self.get_Placa()} | Nome modelo: {self.get_nome_modelo()} | Nome  da Marca: {self.get_nome_marca()} | Renavam: {self.get_renavam()} | cor: {self.get_cor()} | Numero de portas: {self.get_N_portas()} | Tipo de combustivel: {self.get_tipo_combustivel()} |" 
     
