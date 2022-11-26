@@ -55,48 +55,48 @@ class Relatorio:
         mongo = MongoQueries()
         mongo.connect()
         # Recupera os dados transformando em um DataFrame
-        query_result = mongo.db["locacoes"].aggregate([
+        query_result = mongo.db["locacoes"].aggregate([{
+                                                        "$lookup": {
+                                                            "from": "clientes", 
+                                                            "localField": "cpf", 
+                                                            "foreignField": "cpf", 
+                                                            "as": "cliente"
+                                                        }
+                                                    }, 
                                                     {
-                                                        '$lookup': {
-                                                            'from': 'clientes', 
-                                                            'localField': 'cpf', 
-                                                            'foreignField': 'cpf', 
-                                                            'as': 'clientes'
+                                                        "$unwind": {
+                                                            "path": "$cliente"}
+                                                       
+                                                    },
+                                                    {
+                                                        "$lookup": {
+                                                            "from": "automoveis", 
+                                                            "localField": "placa", 
+                                                            "foreignField": "placa", 
+                                                            "as": "automovel"
                                                         }
                                                     }, {
-                                                        '$unwind': {
-                                                            'path': '$clientes'
-                                                        }
-                                                    },{
-                                                        '$lookup': {
-                                                            'from': 'automoveis', 
-                                                            'localField': 'placa', 
-                                                            'foreignField': 'placa', 
-                                                            'as': 'automoveis'
-                                                        }
-                                                    }, {
-                                                        '$unwind': {
-                                                            'path': '$cliente'
+                                                        "$unwind": {
+                                                            "path": "$automovel"
                                                         }
                                                     }, 
                                                         
                                                     
-                                                    
                                                      {
-                                                        '$project': {
-                                                            'codigo_locacao': 1, 
-                                                            'placa': 1,
-                                                            'cpf':1,  
-                                                            'nome': '$clientes.nome', 
-                                                            'data_locacao': 1,
-                                                            'data_devolucao': 1, 
-                                                            '_id': 0
+                                                        "$project": {
+                                                            "codigo_locacao": 1, 
+                                                            "cliente": "$cliente.nome",
+                                                            "placa": "$automovel.placa",
+                                                            "cpf":"$cliente.cpf",
+                                                            "data_locacao": 1,
+                                                            "data_devolucao": 1, 
+                                                            "_id": 0
                                                          }
                                                    }])
         df_locacao = pd.DataFrame(list(query_result))
         # Fecha a conexão com o Mongo
         mongo.close()
-        print(df_locacao[["codigo_locacao", "placa", "cpf","nome", "data_locacao", "data_devolucao"]])
+        print(df_locacao)
         input("Pressione Enter para Sair do Relatório de Locacao")
     
     

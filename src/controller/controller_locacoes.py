@@ -18,58 +18,66 @@ class Controller_Locacoes:
     def inserir_locacoes(self) -> Locacoes:
         # Cria uma nova conexão com o banco
         self.mongo.connect()
-        self.relatorio.get_relatorio_clientes()
-        cpf = str(input("Digite o número do CPF do Cliente: "))
-        cliente = self.valida_cliente(cpf)
-        if cliente == None:
-            return None
 
-        self.relatorio.get_relatorio_automoveis()
-        placa = str(input("Digite a placa do Automovel: "))
-        automovel = self.valida_automovel(placa)
-        if automovel == None:
-            return None
+        codigo = int(input("Codigo de locacao"))
+        if self.verifica_existencia_locacao(codigo):
+            self.relatorio.get_relatorio_clientes()
+            n_cpf = str(input("Digite o número do CPF do Cliente: "))
+            cliente = self.valida_cliente(n_cpf)
+            if cliente == None:
+                return None
+
+            self.relatorio.get_relatorio_automoveis()
+            n_placa = str(input("Digite a placa do Automovel: "))
+            automovel = self.valida_automovel(n_placa)
+            if automovel == None:
+                return None
+        
         
 
         
-        data_locacao = datetime.today().strftime("%m-%d-%Y")
-        dias = int(input("Digite os dias de locacao: "))
-        data_devolucao =  datetime.today() + timedelta(days=dias)
-        ddevolucao = data_devolucao.strftime("%m-%d-%Y")
-        proxima_locacao = self.mongo.db["locacoes"].aggregate([
-                                                    {
-                                                        '$group': {
-                                                            '_id': '$locacoes', 
-                                                            'proxima_locacao': {
-                                                                '$max': '$codigo_locacao'
-                                                            }
-                                                        }
-                                                    }, {
-                                                        '$project': {
-                                                            'proxima_locacao': {
-                                                                '$sum': [
-                                                                    '$proxima_locacao', 1
-                                                                ]
-                                                            }, 
-                                                            '_id': 0
-                                                        }
-                                                    }
-                                                ])
+            ddata_locacao = datetime.today().strftime("%m-%d-%Y")
+            dias = int(input("Digite os dias de locacao: "))
+            d_devolucao =  datetime.today() + timedelta(days=dias)
+            ddata_devolucao = d_devolucao.strftime("%m-%d-%Y")
+        #proxima_locacao = self.mongo.db["locacoes"].aggregate([
+        #                                           {
+         #                                               '$group': {
+          #                                                  '_id': '$locacoes', 
+           #                                                 'proxima_locacao': {
+            #                                                    '$max': '$codigo_locacao'
+             #                                               }
+              #                                          }
+               #                                     }, {
+                #                                        '$project': {
+                 #                                           'proxima_locacao': {
+                  #                                              '$sum': [
+                   #                                                 '$proxima_locacao', 1
+                    #                                            ]
+                     #                                       }, 
+                      #                                      '_id': 0
+                       #                                 }
+                        ##                            }
+                          #                      ])
 
-        proxima_locacao = int(list(proxima_locacao)[0]['proxima_locacao'])
-        data = dict(codigo_locacao = proxima_locacao,ccpf = cliente.get_cpf(),aplaca = automovel.get_Placa(),locacao = data_locacao,devolucao = ddevolucao )
+        #proxima_locacao = int(list(proxima_locacao)[0]['proxima_locacao'])
+            data = dict(codigo_locacao = codigo,cpf = cliente.get_cpf(),placa = automovel.get_Placa(),data_locacao = ddata_locacao,data_devolucao = ddata_devolucao )
         
         # Insere e Recupera o código do novo produto
-        id_locacao = self.mongo.db["locacoes"].insert_one(data)
+            id_locacao = self.mongo.db["locacoes"].insert_one(data)
         # Recupera os dados do novo produto criado transformando em um DataFrame
-        df_locacoes = self.recupera_locacao(id_locacao.inserted_id)
+            df_locacoes = self.recupera_locacao(id_locacao.inserted_id)
         # Cria um novo objeto Produto
-        nova_locacao = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
+            nova_locacao = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
         # Exibe os atributos do novo produto
-        print(nova_locacao.to_string())
-        self.mongo.close()
+            print(nova_locacao.to_string())
+            self.mongo.close()
         # Retorna o objeto novo_produto para utilização posterior, caso necessário
-        return nova_locacao
+            return nova_locacao
+        else: 
+            self.mongo.close()
+            print(f"O codigo {codigo} já existe.")
+            return None
 
     def atualizar_locacao(self) -> Automoveis:
         # Cria uma nova conexão com o banco que permite alteração
@@ -83,23 +91,28 @@ class Controller_Locacoes:
         if not self.verifica_existencia_locacao(codigo_locacao):
             
             self.relatorio.get_relatorio_clientes()
-            cpf = str(input("Digite o número do CPF do Cliente: "))
-            cliente = self.valida_cliente(cpf)
+            ncpf = str(input("Digite o número do CPF do Cliente: "))
+            cliente = self.valida_cliente(ncpf)
             if cliente == None:
                 return None
             self.relatorio.get_relatorio_automoveis()
-            placa = str(input("Digite a placa do Automovel: "))
-            automovel = self.valida_automovel(placa)
+            nplaca = str(input("Digite a placa do Automovel: "))
+            automovel = self.valida_automovel(nplaca)
             if automovel == None:
                 return None
             
             
             # Solicita a nova descrição do produto
             data_locacao= datetime.today().strftime("%m-%d-%Y")
-            data_devolucao = input("Data de Devolucao (Novo): ")
+            dias = int(input("Digite os dias de locacao: "))
+            d_devolucao =  datetime.today() + timedelta(days=dias)
+            data_devolucao = d_devolucao.strftime("%m-%d-%Y")
+
             
+            data = dict(codigo_locacao = codigo_locacao,cpf = cliente.get_cpf(),placa = automovel.get_Placa(),locacao = data_locacao,devolucao = data_devolucao )
+
             # Atualiza a descrição do produto existente
-            self.mongo.db["locacoes"].update_one({"codigo_locacao": codigo_locacao}, {"$set": {"cpf":cliente.get_cpf(),"$placa":automovel.get_Placa(),"$data_locacao":data_locacao,"$data_devolucao": data_devolucao}})
+            self.mongo.db["locacoes"].update_one(data)
             # Recupera os dados do novo produto criado transformando em um DataFrame
             df_locacoes = self.recupera_locacao_codigo(codigo_locacao)
             # Cria um novo objeto Produto
@@ -124,14 +137,14 @@ class Controller_Locacoes:
         # Verifica se o produto existe na base de dados
         if not self.verifica_existencia_locacao(codigo_locacao):            
             # Recupera os dados do novo produto criado transformando em um DataFrame
-            df_produto = self.recupera_locacao_codigo(codigo_locacao)
+            df_locacoes = self.recupera_locacao_codigo(codigo_locacao)
             # Revome o produto da tabela
             self.mongo.db["locacoes"].delete_one({"codigo_locacao": codigo_locacao})
             # Cria um novo objeto Produto para informar que foi removido
-            locacao_excluido = Locacoes(df_produto.codigo_produto.values[0], df_produto.descricao_produto.values[0])
+        #    locacao_excluido = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
             # Exibe os atributos do produto excluído
             print("Produto Removido com Sucesso!")
-            print(locacao_excluido.to_string())
+           # print(locacao_excluido.to_string())
             self.mongo.close()
         else:
             self.mongo.close()

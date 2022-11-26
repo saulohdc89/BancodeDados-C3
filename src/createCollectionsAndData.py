@@ -43,6 +43,9 @@ def extract_and_insert():
     sql = "select * from labdatabase.{table}"
     for collection in LIST_OF_COLLECTIONS:
         df = oracle.sqlToDataFrame(sql.format(table=collection))
+        if collection == "locacoes":
+            df["data_locacao"] = df["data_locacao"].dt.strftime("%m-%d-%Y")
+            df["data_devolucao"] = df["data_devolucao"].dt.strftime("%m-%d-%Y") 
         
         logger.warning(f"data extracted from database Oracle labdatabase.{collection}")
         records = json.loads(df.T.to_json()).values()
