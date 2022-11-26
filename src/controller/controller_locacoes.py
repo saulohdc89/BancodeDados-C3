@@ -103,13 +103,13 @@ class Controller_Locacoes:
             
             
             # Solicita a nova descrição do produto
-            data_locacao= datetime.today().strftime("%m-%d-%Y")
+            locacao= datetime.today().strftime("%m-%d-%Y")
             dias = int(input("Digite os dias de locacao: "))
             d_devolucao =  datetime.today() + timedelta(days=dias)
-            data_devolucao = d_devolucao.strftime("%m-%d-%Y")
+            dd_devolucao = d_devolucao.strftime("%m-%d-%Y")
 
             
-            data = dict(codigo_locacao = codigo_locacao,cpf = cliente.get_cpf(),placa = automovel.get_Placa(),locacao = data_locacao,devolucao = data_devolucao )
+            data = dict(codigo_locacao = codigo_locacao,cpf = cliente.get_cpf(),placa = automovel.get_Placa(),data_locacao = locacao,data_devolucao = dd_devolucao )
 
             # Atualiza a descrição do produto existente
             self.mongo.db["locacoes"].update_one(data)
