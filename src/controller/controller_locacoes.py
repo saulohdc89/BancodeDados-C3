@@ -143,7 +143,7 @@ class Controller_Locacoes:
             # Cria um novo objeto Produto para informar que foi removido
         #    locacao_excluido = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
             # Exibe os atributos do produto excluído
-            print("Produto Removido com Sucesso!")
+            print("Locacao Removida com Sucesso!")
            # print(locacao_excluido.to_string())
             self.mongo.close()
         else:
