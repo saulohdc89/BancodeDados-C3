@@ -124,7 +124,7 @@ class Controller_Locacoes:
             return locacoes_atualizado
         else:
             self.mongo.close()
-            print(f"O código {codigo_locacao} não existe.")
+            print(f"O código {codigo_locacao} não existe na base.")
             return None
 
     def excluir_locacao(self):
