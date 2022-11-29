@@ -139,7 +139,7 @@ class Controller_Locacoes:
             # Recupera os dados do novo produto criado transformando em um DataFrame
             df_locacoes = self.recupera_locacao_codigo(codigo_locacao)
             # Revome o produto da tabela
-            self.mongo.db["locacoes"].delete_one({"codigo_locacao": codigo_locacao})
+            self.mongo.db["locacoes"].delete_one({"codigo_locacao":f"{codigo_locacao}"})
             # Cria um novo objeto Produto para informar que foi removido
         #    locacao_excluido = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
             # Exibe os atributos do produto excluído
