@@ -4,7 +4,7 @@ class SplashScreen:
 
     def __init__(self):
         # Nome(s) do(s) criador(es)
-        self.created_by = "Saulo Henrique de Castro"
+        self.created_by = "Grupo 7 Saulo - Matheus - Flavio - Fernando"
         self.professor = "Prof. M.Sc. Howard Roatti"
         self.disciplina = "Banco de Dados"
         self.semestre = "2022/2"
@@ -20,9 +20,9 @@ class SplashScreen:
         #                   SISTEMA DE LOCACOES                     
         #                                                         
         #  TOTAL DE REGISTROS:                                    
-        #      1 - CLIENTES:         {str(self.get_documents_count(collection_name="clientes")).rjust(5)}
-        #      2 - AUTOMOVEIS:         {str(self.get_documents_count(collection_name="automoveis")).rjust(5)}
-        #      3 - LOCACOES:     {str(self.get_documents_count(collection_name="locacoes")).rjust(5)}
+        #      1 - CLIENTES:    {str(self.get_documents_count(collection_name="clientes")).rjust(5)}
+        #      2 - AUTOMOVEIS:  {str(self.get_documents_count(collection_name="automoveis")).rjust(5)}
+        #      3 - LOCACOES:    {str(self.get_documents_count(collection_name="locacoes")).rjust(5)}
         #
         #  CRIADO POR: {self.created_by}
         #

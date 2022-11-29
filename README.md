@@ -1,4 +1,12 @@
+#Grupo 7
+FERNANDO CARLOS VIDAL DA SILVA 	
+FLAVIO ROBERTO FERREIRA 	
+MATHEUS MOREIRA ALVES 	
+SAULO HENRIQUE DE CASTRO
+
+
 # Exemplo de Sistema em Python fazendo CRUD no MongoDB
+
 
 Esse sistema de exemplo é composto por um conjunto de coleções(collections) que representam pedidos de vendas, contendo coleções como: clientes, fornecedores, produtos, pedidos e itens de pedido.
 
