@@ -4,7 +4,7 @@ from model.clientes import Clientes
 from model.automoveis import Automoveis
 
 class Locacoes:
-    def __init__(self,codigo_locacao:int=None, cliente:Clientes=None, automoveis:Automoveis=None, data_locacao:str=None,data_devolucao:str=None):
+    def __init__(self,codigo_locacao:str=None, cliente:Clientes=None, automoveis:Automoveis=None, data_locacao:str=None,data_devolucao:str=None):
         self.set_codigo_locacao(codigo_locacao)
         self.set_data_devolucao(data_devolucao)
         self.set_cliente(cliente)

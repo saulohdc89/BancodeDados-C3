@@ -19,7 +19,7 @@ class Controller_Locacoes:
         # Cria uma nova conexão com o banco
         self.mongo.connect()
 
-        codigo = int(input("Codigo de locacao"))
+        codigo = str(input("Codigo de locacao"))
         if self.verifica_existencia_locacao(codigo):
             self.relatorio.get_relatorio_clientes()
             n_cpf = str(input("Digite o número do CPF do Cliente: "))
@@ -84,7 +84,7 @@ class Controller_Locacoes:
         self.mongo.connect()
 
         # Solicita ao usuário o código do produto a ser alterado
-        codigo_locacao = int(input("Código da Locaçao que irá alterar: "))
+        codigo_locacao = str(input("Código da Locaçao que irá alterar: "))
 
 
         # Verifica se o produto existe na base de dados
@@ -132,25 +132,27 @@ class Controller_Locacoes:
         self.mongo.connect()
 
         # Solicita ao usuário o código do produto a ser alterado
-        codigo_locacao = int(input("Código da Locacao que irá excluir: "))        
+        codigo_locacao = str(input("Código da Locacao que irá excluir: "))        
 
         # Verifica se o produto existe na base de dados
         if not self.verifica_existencia_locacao(codigo_locacao):            
             # Recupera os dados do novo produto criado transformando em um DataFrame
             df_locacoes = self.recupera_locacao_codigo(codigo_locacao)
+            cliente  = self.valida_cliente(df_locacoes.cpf.values[0])
+            automovel = self.valida_automovel(df_locacoes.placa.values[0])
             # Revome o produto da tabela
             self.mongo.db["locacoes"].delete_one({"codigo_locacao":f"{codigo_locacao}"})
             # Cria um novo objeto Produto para informar que foi removido
-        #    locacao_excluido = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
+            locacao_excluido = Locacoes(df_locacoes.codigo_locacao.values[0], cliente, automovel,df_locacoes.data_locacao.values[0],df_locacoes.data_devolucao.values[0])
             # Exibe os atributos do produto excluído
             print("Locacao Removida com Sucesso!")
-           # print(locacao_excluido.to_string())
+            print(locacao_excluido.to_string())
             self.mongo.close()
         else:
             self.mongo.close()
             print(f"O código {codigo_locacao} não existe.")
 
-    def verifica_existencia_locacao(self, codigo:int=None, external: bool = False) -> bool:
+    def verifica_existencia_locacao(self, codigo:str=None, external: bool = False) -> bool:
         if external:
             # Cria uma nova conexão com o banco que permite alteração
             self.mongo.connect()
@@ -169,7 +171,7 @@ class Controller_Locacoes:
         df_produto = pd.DataFrame(list(self.mongo.db["locacoes"].find({"_id":_id}, {"codigo_locacao": 1,"cpf":1 ,"placa": 1,"data_locacao":1,"data_devolucao":1,"_id": 0})))
         return df_produto
 
-    def recupera_locacao_codigo(self, codigo:int=None, external: bool = False) -> pd.DataFrame:
+    def recupera_locacao_codigo(self, codigo:str=None, external: bool = False) -> pd.DataFrame:
         if external:
             # Cria uma nova conexão com o banco que permite alteração
             self.mongo.connect()
