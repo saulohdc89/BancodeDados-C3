@@ -11,7 +11,7 @@ SAULO HENRIQUE DE CASTRO <br />
 # Exemplo de Sistema em Python fazendo CRUD no MongoDB
 
 
-Esse sistema de exemplo é composto por um conjunto de coleções(collections) que representam pedidos de vendas, contendo coleções como: clientes, fornecedores, produtos, pedidos e itens de pedido.
+Esse sistema de exemplo é composto por um conjunto de coleções(collections) que representam pedidos de locação, contendo coleções como: clientes, automóveis,locações.
 
 O sistema exige que as coleções existam, então basta executar o script Python a seguir para criação das coleções e preenchimento de dados de exemplos:
 ```shell
