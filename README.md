@@ -25,8 +25,8 @@ Para executar o sistema basta executar o script Python a seguir:
 ```
 
 # Videos do projeto
-https://www.youtube.com/watch?v=cmTbOqAmZ8A&feature=youtu.be
-
+Resumo do projeto: https://www.youtube.com/watch?v=cmTbOqAmZ8A&feature=youtu.be
+Menus e funcionalidades: https://www.youtube.com/watch?v=xN_xEJG7XCU
 
 ## Organização
 - [diagrams](diagrams): Nesse diretório está o [diagrama relacional](diagrams/DIAGRAMA_RELACIONAL_PEDIDOS.pdf) (lógico) do sistema.
