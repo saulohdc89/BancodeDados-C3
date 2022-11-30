@@ -25,7 +25,7 @@ Para executar o sistema basta executar o script Python a seguir:
 ```
 
 # Videos do projeto
-Resumo do projeto: https://www.youtube.com/watch?v=cmTbOqAmZ8A&feature=youtu.be
+Resumo do projeto: https://www.youtube.com/watch?v=cmTbOqAmZ8A&feature=youtu.be <br />
 Menus e funcionalidades: https://www.youtube.com/watch?v=xN_xEJG7XCU
 
 ## Organização
