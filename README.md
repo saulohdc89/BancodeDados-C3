@@ -24,6 +24,10 @@ Para executar o sistema basta executar o script Python a seguir:
 ~$ python principal.py
 ```
 
+# Videos do projeto
+https://www.youtube.com/watch?v=cmTbOqAmZ8A&feature=youtu.be
+
+
 ## Organização
 - [diagrams](diagrams): Nesse diretório está o [diagrama relacional](diagrams/DIAGRAMA_RELACIONAL_PEDIDOS.pdf) (lógico) do sistema.
     * O sistema possui três entidades: , CLIENTES, AUTOMOVEIS, LOCACOES
